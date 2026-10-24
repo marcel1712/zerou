@@ -38,6 +38,41 @@ The app is a learning project. Its real purpose is to practice a production-styl
 
 TypeScript, Node.js, Next.js, AWS Lambda, API Gateway, Cognito, S3, CloudFront, SQS, PostgreSQL
 
+## Project structure
+
+```
+zerou/
+├── apps/
+│   └── web/                  # Next.js BFF and UI
+│       └── src/
+│           ├── app/
+│           │   ├── (auth)/   # login, callback and logout pages
+│           │   ├── (app)/    # signed-in pages
+│           │   ├── admin/    # admin-only pages
+│           │   └── api/      # BFF route handlers (auth, games)
+│           ├── components/
+│           └── lib/          # auth, session and API client
+├── services/
+│   └── api/                  # Lambda code
+│       ├── src/
+│       │   ├── handlers/     # one entry point per Lambda (games, covers, admin, jobs, cognito)
+│       │   ├── domain/       # business logic, no AWS imports
+│       │   ├── db/           # schema, client and migrations
+│       │   ├── integrations/ # external services (S3, SQS, game API)
+│       │   └── lib/          # shared helpers (http, auth, logging)
+│       └── test/
+├── packages/
+│   ├── shared/               # schemas and types shared by web and api
+│   └── tsconfig/             # base TypeScript config
+├── infra/                    # AWS CDK app, one stack per area
+├── docs/
+│   ├── adr/                  # architecture decision records
+│   └── runbooks/             # notes for each roadmap step built in the console
+└── .github/workflows/        # CI
+```
+
+Handlers stay thin and call into `domain`, which depends on `db` and `integrations`. The web app and the API share code only through `packages/shared`.
+
 ## Status
 
 Work in progress. Each roadmap step is built by hand in the AWS console first, then repeated with infrastructure as code.
